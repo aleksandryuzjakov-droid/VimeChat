@@ -1,0 +1,1457 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0b0b14">
+    <title>VimeChat</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #0b0b14;
+            --panel: #11111e;
+            --panel2: #171728;
+            --panel3: #202038;
+            --border-color: #292941;
+            --text: #f5f5ff;
+            --muted: #85859e;
+            --purple: #8757ff;
+            --purple-light: #a78bfa;
+            --blue: #536dfe;
+            --danger: #ff536b;
+            --success: #43d9a3;
+            --radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        button, input, textarea {
+            font-family: inherit;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+        }
+
+        input, textarea {
+            outline: none;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .view {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .view.active {
+            display: flex;
+        }
+
+        /* AUTH */
+
+        #auth-view {
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background:
+                radial-gradient(ellipse at 20% 20%, #42218a33, transparent 45%),
+                radial-gradient(ellipse at 80% 80%, #2941a533, transparent 45%),
+                var(--bg);
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 420px;
+            padding: 38px;
+            background: #141421ee;
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            box-shadow: 0 25px 100px #0008;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            display: grid;
+            place-items: center;
+            border-radius: 15px;
+            background: linear-gradient(135deg, var(--purple), var(--blue));
+            font-size: 25px;
+            font-weight: 800;
+        }
+
+        .logo h1 {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .logo h1 span {
+            color: var(--purple-light);
+        }
+
+        .auth-subtitle {
+            text-align: center;
+            color: var(--muted);
+            font-size: 13px;
+            margin-bottom: 30px;
+        }
+
+        .auth-tabs {
+            display: flex;
+            padding: 5px;
+            gap: 5px;
+            background: var(--bg);
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 12px;
+            color: var(--muted);
+            background: transparent;
+            border-radius: 9px;
+            font-weight: 600;
+        }
+
+        .auth-tab.active {
+            background: var(--panel3);
+            color: white;
+        }
+
+        .field {
+            margin-bottom: 17px;
+        }
+
+        .field label {
+            display: block;
+            color: #c7c7d8;
+            font-size: 13px;
+            margin-bottom: 9px;
+            font-weight: 600;
+        }
+
+        .field input {
+            width: 100%;
+            padding: 14px 15px;
+            color: white;
+            background: var(--bg);
+            border: 1px solid var(--border-color);
+            border-radius: 11px;
+            font-size: 14px;
+            transition: .2s;
+        }
+
+        .field input:focus {
+            border-color: var(--purple);
+            box-shadow: 0 0 0 3px #8757ff22;
+        }
+
+        .primary-btn {
+            width: 100%;
+            padding: 15px;
+            color: white;
+            background: linear-gradient(135deg, var(--purple), var(--blue));
+            border-radius: 11px;
+            font-weight: 700;
+            font-size: 14px;
+            transition: .2s;
+        }
+
+        .primary-btn:hover {
+            filter: brightness(1.15);
+            transform: translateY(-1px);
+        }
+
+        .primary-btn:disabled {
+            opacity: .5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* LOBBY */
+
+        #lobby-view {
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 25px;
+            background:
+                radial-gradient(ellipse at 50% 0%, #5127a533, transparent 55%),
+                var(--bg);
+        }
+
+        .lobby-card {
+            width: 100%;
+            max-width: 650px;
+            padding: 35px;
+            border: 1px solid var(--border-color);
+            background: var(--panel);
+            border-radius: 22px;
+        }
+
+        .lobby-heading {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .lobby-heading .big-icon {
+            font-size: 45px;
+            margin-bottom: 15px;
+        }
+
+        .lobby-heading h2 {
+            font-size: 26px;
+            margin-bottom: 9px;
+        }
+
+        .lobby-heading p {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .lobby-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .lobby-action {
+            padding: 22px;
+            text-align: left;
+            background: var(--panel2);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            color: white;
+            transition: .2s;
+        }
+
+        .lobby-action:hover {
+            border-color: var(--purple);
+            background: #211c38;
+            transform: translateY(-2px);
+        }
+
+        .lobby-action .action-icon {
+            font-size: 27px;
+            margin-bottom: 15px;
+        }
+
+        .lobby-action h3 {
+            font-size: 15px;
+            margin-bottom: 7px;
+        }
+
+        .lobby-action p {
+            font-size: 12px;
+            line-height: 1.5;
+            color: var(--muted);
+        }
+
+        .join-form {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .join-form label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .join-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .join-row input {
+            min-width: 0;
+            flex: 1;
+            padding: 13px;
+            color: white;
+            background: var(--bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+        }
+
+        .join-row button {
+            padding: 0 20px;
+            color: white;
+            background: var(--purple);
+            border-radius: 10px;
+            font-weight: 700;
+        }
+
+        .created-info {
+            text-align: center;
+            padding: 25px;
+            margin-top: 20px;
+            background: #8757ff12;
+            border: 1px solid #8757ff55;
+            border-radius: 15px;
+        }
+
+        .created-info p {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .group-code {
+            font-size: 30px;
+            letter-spacing: 6px;
+            font-weight: 800;
+            color: var(--purple-light);
+            margin: 15px 0;
+        }
+
+        /* CHAT */
+
+        #chat-view {
+            height: 100vh;
+            min-height: 500px;
+            overflow: hidden;
+            flex-direction: column;
+        }
+
+        .topbar {
+            height: 68px;
+            min-height: 68px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 22px;
+            background: var(--panel);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .topbar-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 19px;
+            font-weight: 800;
+        }
+
+        .topbar-logo span {
+            color: var(--purple-light);
+        }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .secondary-btn {
+            padding: 10px 14px;
+            color: #deddf0;
+            background: var(--panel3);
+            border: 1px solid var(--border-color);
+            border-radius: 9px;
+            font-size: 12px;
+            font-weight: 600;
+            transition: .2s;
+        }
+
+        .secondary-btn:hover {
+            border-color: var(--purple);
+            color: white;
+        }
+
+        .danger-btn {
+            color: #ff8796;
+        }
+
+        .chat-layout {
+            display: flex;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .members-panel {
+            width: 270px;
+            min-width: 230px;
+            display: flex;
+            flex-direction: column;
+            background: var(--panel);
+            border-right: 1px solid var(--border-color);
+        }
+
+        .sidebar-heading {
+            padding: 20px 17px 12px;
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+        }
+
+        #sidebar {
+            flex: 1;
+            overflow-y: auto;
+            padding: 5px 10px;
+        }
+
+        .user-card {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 11px;
+            border-radius: 11px;
+            cursor: pointer;
+            margin-bottom: 5px;
+            transition: .2s;
+        }
+
+        .user-card:hover,
+        .user-card.active {
+            background: var(--panel3);
+        }
+
+        .avatar {
+            width: 37px;
+            height: 37px;
+            min-width: 37px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #30254c;
+            border-radius: 50%;
+            font-size: 19px;
+        }
+
+        .user-info {
+            min-width: 0;
+        }
+
+        .user-name {
+            font-size: 13px;
+            font-weight: 600;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .badge {
+            display: inline-block;
+            margin-top: 4px;
+            font-size: 9px;
+            padding: 3px 6px;
+            border-radius: 5px;
+            font-weight: 700;
+        }
+
+        .role-leader {
+            color: #d3b8ff;
+            background: #8757ff25;
+        }
+
+        .role-coleader {
+            color: #a9baff;
+            background: #536dfe25;
+        }
+
+        .profile-footer {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px;
+            margin-top: auto;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .profile-footer .avatar {
+            flex-shrink: 0;
+        }
+
+        .profile-footer .user-name {
+            color: white;
+            font-size: 14px;
+        }
+
+        .chat-main {
+            display: flex;
+            flex: 1;
+            min-width: 0;
+            flex-direction: column;
+            background:
+                radial-gradient(ellipse at 50% 30%, #28204420, transparent 60%),
+                var(--bg);
+        }
+
+        .chat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 17px 22px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .chat-header h2 {
+            font-size: 15px;
+        }
+
+        .chat-header p {
+            margin-top: 4px;
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        #messages-container {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            padding: 22px;
+        }
+
+        .message-group {
+            display: flex;
+            flex-direction: column;
+            max-width: 75%;
+            margin-bottom: 18px;
+        }
+
+        .msg-left {
+            align-items: flex-start;
+        }
+
+        .msg-right {
+            align-items: flex-end;
+            margin-left: auto;
+        }
+
+        .msg-author {
+            color: var(--muted);
+            font-size: 11px;
+            margin-bottom: 6px;
+        }
+
+        .message-bubble {
+            padding: 12px 15px;
+            border-radius: 13px;
+            background: var(--panel2);
+            border: 1px solid var(--border-color);
+            font-size: 13px;
+            line-height: 1.55;
+            overflow-wrap: anywhere;
+            white-space: pre-wrap;
+        }
+
+        .msg-right .message-bubble {
+            background: linear-gradient(135deg, #6840c9, #4856c9);
+            border-color: transparent;
+        }
+
+        .chat-composer {
+            display: flex;
+            gap: 10px;
+            padding: 17px 20px;
+            border-top: 1px solid var(--border-color);
+            background: var(--panel);
+        }
+
+        .chat-composer textarea {
+            flex: 1;
+            min-width: 0;
+            min-height: 45px;
+            max-height: 120px;
+            resize: vertical;
+            padding: 13px 15px;
+            color: white;
+            background: var(--bg);
+            border: 1px solid var(--border-color);
+            border-radius: 11px;
+            font-size: 13px;
+        }
+
+        .chat-composer textarea:focus {
+            border-color: var(--purple);
+        }
+
+        .icon-btn {
+            width: 45px;
+            min-width: 45px;
+            height: 45px;
+            border-radius: 11px;
+            color: white;
+            background: var(--panel3);
+            font-size: 18px;
+        }
+
+        .send-btn {
+            background: var(--purple);
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .send-btn:disabled {
+            opacity: .4;
+            cursor: not-allowed;
+        }
+
+        /* PROJECTS */
+
+        #projects-view {
+            flex-direction: column;
+            background: var(--bg);
+        }
+
+        .projects-header {
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 25px;
+            background: var(--panel);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .projects-header h2 {
+            font-size: 18px;
+        }
+
+        .projects-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .projects-description {
+            color: var(--muted);
+            font-size: 13px;
+            margin: 10px 0 25px;
+        }
+
+        #projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            gap: 17px;
+        }
+
+        .project-card {
+            padding: 20px;
+            background: var(--panel);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            transition: .2s;
+        }
+
+        .project-card:hover {
+            border-color: var(--purple);
+            transform: translateY(-3px);
+        }
+
+        .project-icon-large {
+            width: 55px;
+            height: 55px;
+            display: grid;
+            place-items: center;
+            background: var(--panel3);
+            border-radius: 13px;
+            font-size: 27px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .project-icon-large img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .project-title {
+            font-size: 14px;
+            font-weight: 700;
+            overflow-wrap: anywhere;
+        }
+
+        .project-author,
+        .project-version {
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .btn-download-project {
+            width: 100%;
+            padding: 11px;
+            margin-top: 17px;
+            color: white;
+            background: #8757ff25;
+            border: 1px solid #8757ff55;
+            border-radius: 9px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .btn-download-project:hover {
+            background: var(--purple);
+        }
+
+        /* MODALS */
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: #000a;
+            backdrop-filter: blur(7px);
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-card {
+            width: 100%;
+            max-width: 460px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 25px;
+            background: var(--panel);
+            border: 1px solid var(--border-color);
+            border-radius: 19px;
+            box-shadow: 0 20px 80px #0008;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 25px;
+        }
+
+        .modal-header h2 {
+            font-size: 19px;
+        }
+
+        .close-btn {
+            width: 33px;
+            height: 33px;
+            color: var(--muted);
+            background: var(--panel3);
+            border-radius: 9px;
+            font-size: 19px;
+        }
+
+        .close-btn:hover {
+            color: white;
+        }
+
+        .file-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 48px;
+            padding: 12px;
+            color: #d8c9ff;
+            background: #8757ff15;
+            border: 1px dashed #8757ff77;
+            border-radius: 10px;
+            font-size: 12px;
+            cursor: pointer;
+            overflow-wrap: anywhere;
+        }
+
+        .file-label:hover {
+            background: #8757ff28;
+        }
+
+        .file-input-hidden {
+            display: none;
+        }
+
+        #icon-preview {
+            display: none;
+            width: 65px;
+            height: 65px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-top: 12px;
+        }
+
+        /* PROFILE */
+
+        .avatar-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+
+        .avatar-option {
+            width: 43px;
+            height: 43px;
+            background: var(--panel3);
+            border: 2px solid transparent;
+            border-radius: 50%;
+            font-size: 21px;
+        }
+
+        .avatar-option:hover {
+            background: #352653;
+        }
+
+        .avatar-option.selected {
+            border-color: var(--purple-light);
+            background: #8757ff33;
+        }
+
+        /* TOAST */
+
+        #toast {
+            position: fixed;
+            z-index: 200;
+            bottom: 25px;
+            left: 50%;
+            max-width: calc(100% - 30px);
+            padding: 13px 20px;
+            color: white;
+            background: #242438;
+            border: 1px solid #484865;
+            border-radius: 11px;
+            font-size: 13px;
+            box-shadow: 0 10px 40px #0008;
+            opacity: 0;
+            pointer-events: none;
+            transform: translate(-50%, 15px);
+            transition: .25s;
+        }
+
+        #toast.show {
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
+
+        /* SCROLLBAR */
+
+        ::-webkit-scrollbar {
+            width: 7px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #35354e;
+            border-radius: 10px;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 700px) {
+            .auth-card {
+                padding: 25px;
+            }
+
+            .lobby-card {
+                padding: 23px;
+            }
+
+            .lobby-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .members-panel {
+                width: 90px;
+                min-width: 90px;
+            }
+
+            .sidebar-heading {
+                padding: 15px 5px;
+                text-align: center;
+                font-size: 9px;
+            }
+
+            .user-card {
+                flex-direction: column;
+                padding: 9px 3px;
+                text-align: center;
+            }
+
+            .user-info {
+                max-width: 100%;
+            }
+
+            .user-name {
+                font-size: 10px;
+            }
+
+            .badge {
+                font-size: 8px;
+            }
+
+            .profile-footer {
+                flex-direction: column;
+                padding: 10px 3px;
+                text-align: center;
+            }
+
+            .profile-footer .user-name {
+                font-size: 10px;
+            }
+
+            .topbar {
+                padding: 0 10px;
+            }
+
+            .topbar-logo {
+                font-size: 15px;
+            }
+
+            .topbar-actions {
+                gap: 5px;
+            }
+
+            .secondary-btn {
+                padding: 9px 8px;
+                font-size: 10px;
+            }
+
+            .chat-header {
+                padding: 14px 12px;
+            }
+
+            #messages-container {
+                padding: 14px;
+            }
+
+            .chat-composer {
+                padding: 10px;
+                gap: 6px;
+            }
+
+            .projects-content {
+                padding: 17px;
+            }
+
+            .projects-header {
+                padding: 0 13px;
+            }
+
+            .join-row {
+                flex-direction: column;
+            }
+
+            .join-row button {
+                padding: 13px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .members-panel {
+                width: 72px;
+                min-width: 72px;
+            }
+
+            .topbar-logo {
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- АВТОРИЗАЦИЯ -->
+
+    <section id="auth-view" class="view active">
+        <div class="auth-card">
+
+            <div class="logo">
+                <div class="logo-icon">V</div>
+                <h1>Vime<span>Chat</span></h1>
+            </div>
+
+            <p class="auth-subtitle">
+                Общайся, создавай проекты и работай вместе
+            </p>
+
+            <div class="auth-tabs">
+                <button id="tab-login" class="auth-tab active" type="button">
+                    Войти
+                </button>
+
+                <button id="tab-register" class="auth-tab" type="button">
+                    Регистрация
+                </button>
+            </div>
+
+            <form id="auth-form">
+
+                <div class="field">
+                    <label for="auth-username">Имя пользователя</label>
+                    <input
+                        id="auth-username"
+                        type="text"
+                        placeholder="Например, Developer"
+                        minlength="3"
+                        maxlength="24"
+                        autocomplete="username"
+                        required
+                    >
+                </div>
+
+                <div class="field">
+                    <label for="auth-password">Пароль</label>
+                    <input
+                        id="auth-password"
+                        type="password"
+                        placeholder="Твой пароль"
+                        minlength="6"
+                        autocomplete="current-password"
+                        required
+                    >
+                </div>
+
+                <button id="btn-auth-submit" class="primary-btn" type="submit">
+                    Войти
+                </button>
+
+            </form>
+        </div>
+    </section>
+
+    <!-- ГЛАВНАЯ -->
+
+    <section id="lobby-view" class="view">
+        <div class="lobby-card">
+
+            <div class="lobby-heading">
+                <div class="big-icon">💬</div>
+                <h2>Добро пожаловать в VimeChat!</h2>
+                <p>Создай свою группу или присоединись к существующей.</p>
+            </div>
+
+            <div class="lobby-actions">
+
+                <button id="btn-create-group" class="lobby-action" type="button">
+                    <div class="action-icon">✨</div>
+                    <h3>Создать группу</h3>
+                    <p>Создай новую комнату и пригласи друзей по коду.</p>
+                </button>
+
+                <button
+                    class="lobby-action"
+                    type="button"
+                    onclick="document.getElementById('invite-code').focus()"
+                >
+                    <div class="action-icon">🔗</div>
+                    <h3>Присоединиться</h3>
+                    <p>Введи код приглашения и присоединяйся к друзьям.</p>
+                </button>
+
+            </div>
+
+            <div id="join-group-form" class="join-form">
+
+                <label for="invite-code">Код приглашения</label>
+
+                <div class="join-row">
+                    <input
+                        id="invite-code"
+                        type="text"
+                        placeholder="Введи код группы"
+                        maxlength="32"
+                    >
+
+                    <button id="btn-join-group" type="button">
+                        Войти
+                    </button>
+                </div>
+
+            </div>
+
+            <div id="created-group-info" class="created-info hidden">
+
+                <p>Группа успешно создана!</p>
+
+                <div id="display-group-code" class="group-code">
+                    --------
+                </div>
+
+                <p>Отправь этот код друзьям.</p>
+
+                <button
+                    id="btn-continue-group"
+                    class="primary-btn"
+                    type="button"
+                    style="margin-top: 20px;"
+                >
+                    Открыть группу
+                </button>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ЧАТ -->
+
+    <section id="chat-view" class="view">
+
+        <header class="topbar">
+
+            <div class="topbar-logo">
+                <div class="logo-icon" style="width:34px;height:34px;font-size:18px;">
+                    V
+                </div>
+                Vime<span>Chat</span>
+            </div>
+
+            <div class="topbar-actions">
+
+                <button id="btn-projects" class="secondary-btn hidden" type="button">
+                    📦 Проекты
+                </button>
+
+                <button id="btn-profile" class="secondary-btn hidden" type="button">
+                    👤 Профиль
+                </button>
+
+                <button id="btn-exit" class="secondary-btn danger-btn hidden" type="button">
+                    Выйти из группы
+                </button>
+
+                <button id="btn-logout" class="secondary-btn hidden" type="button">
+                    Выйти
+                </button>
+
+            </div>
+
+        </header>
+
+        <div class="chat-layout">
+
+            <aside class="members-panel">
+
+                <div class="sidebar-heading">
+                    Участники
+                </div>
+
+                <div id="sidebar"></div>
+
+                <!-- ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ -->
+
+                <div class="profile-footer">
+
+                    <div id="bottom-avatar" class="avatar">
+                        🕷️
+                    </div>
+
+                    <div id="bottom-profile-name" class="user-name">
+                        Пользователь
+                    </div>
+
+                </div>
+
+            </aside>
+
+            <main class="chat-main">
+
+                <div class="chat-header">
+
+                    <div>
+                        <h2>Групповой чат</h2>
+                        <p id="project-group-label">Выберите группу</p>
+                    </div>
+
+                </div>
+
+                <div id="messages-container"></div>
+
+                <div class="chat-composer">
+
+                    <input
+                        id="file-input"
+                        class="file-input-hidden"
+                        type="file"
+                    >
+
+                    <button id="btn-attach" class="icon-btn" type="button" title="Прикрепить файл">
+                        📎
+                    </button>
+
+                    <textarea
+                        id="chat-input"
+                        placeholder="Напиши сообщение..."
+                        rows="1"
+                    ></textarea>
+
+                    <button
+                        id="btn-send"
+                        class="icon-btn send-btn"
+                        type="button"
+                        disabled
+                        title="Отправить"
+                    >
+                        ➤
+                    </button>
+
+                </div>
+
+            </main>
+
+        </div>
+
+    </section>
+
+    <!-- ПРОЕКТЫ -->
+
+    <section id="projects-view" class="view">
+
+        <header class="projects-header">
+
+            <h2>📦 Проекты группы</h2>
+
+            <div style="display:flex;gap:9px;">
+
+                <button id="btn-open-upload" class="secondary-btn" type="button">
+                    ＋ Загрузить проект
+                </button>
+
+                <button
+                    id="btn-projects-back"
+                    class="secondary-btn"
+                    type="button"
+                    onclick="document.getElementById('btn-projects').click()"
+                >
+                    ← Назад
+                </button>
+
+            </div>
+
+        </header>
+
+        <div class="projects-content">
+
+            <h2>Библиотека проектов</h2>
+
+            <p class="projects-description">
+                Здесь хранятся проекты участников твоей группы.
+            </p>
+
+            <div id="projects-grid"></div>
+
+        </div>
+
+    </section>
+
+    <!-- МОДАЛЬНОЕ ОКНО ЗАГРУЗКИ ПРОЕКТА -->
+
+    <div id="project-modal" class="modal">
+
+        <div class="modal-card">
+
+            <div class="modal-header">
+
+                <h2>Новый проект</h2>
+
+                <button id="close-modal" class="close-btn" type="button">
+                    ×
+                </button>
+
+            </div>
+
+            <form id="upload-form">
+
+                <div class="field">
+                    <label for="proj-name">Название проекта</label>
+
+                    <input
+                        id="proj-name"
+                        type="text"
+                        placeholder="Мой проект"
+                        maxlength="80"
+                        required
+                    >
+                </div>
+
+                <div class="field">
+                    <label for="proj-version">Версия</label>
+
+                    <input
+                        id="proj-version"
+                        type="text"
+                        placeholder="1.0"
+                        maxlength="20"
+                        required
+                    >
+                </div>
+
+                <div class="field">
+                    <label>Файл проекта</label>
+
+                    <label for="proj-file" id="proj-file-label" class="file-label">
+                        📁 Выбрать файл проекта
+                    </label>
+
+                    <input
+                        id="proj-file"
+                        class="file-input-hidden"
+                        type="file"
+                        accept=".catrobat,.newtrobat"
+                        required
+                    >
+                </div>
+
+                <div class="field">
+                    <label>Иконка проекта (необязательно)</label>
+
+                    <label for="proj-icon" id="proj-icon-label" class="file-label">
+                        🖼️ Выбрать картинку
+                    </label>
+
+                    <input
+                        id="proj-icon"
+                        class="file-input-hidden"
+                        type="file"
+                        accept="image/*"
+                    >
+
+                    <img id="icon-preview" alt="Предпросмотр иконки">
+                </div>
+
+                <button
+                    id="btn-submit-project"
+                    class="primary-btn"
+                    type="submit"
+                    disabled
+                >
+                    Загрузить проект
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО ПРОФИЛЯ -->
+
+    <div id="profile-modal" class="modal">
+
+        <div class="modal-card">
+
+            <div class="modal-header">
+
+                <h2>Мой профиль</h2>
+
+                <button id="close-profile-modal" class="close-btn" type="button">
+                    ×
+                </button>
+
+            </div>
+
+            <form id="profile-form">
+
+                <div class="field">
+
+                    <label for="profile-username">
+                        Имя пользователя
+                    </label>
+
+                    <input
+                        id="profile-username"
+                        type="text"
+                        maxlength="24"
+                        required
+                    >
+
+                </div>
+
+                <div class="field">
+
+                    <label>Выбери аватар</label>
+
+                    <div id="avatar-selector" class="avatar-options">
+
+                        <button class="avatar-option selected" type="button" data-avatar="🕷️">🕷️</button>
+                        <button class="avatar-option" type="button" data-avatar="😎">😎</button>
+                        <button class="avatar-option" type="button" data-avatar="🐱">🐱</button>
+                        <button class="avatar-option" type="button" data-avatar="🐸">🐸</button>
+                        <button class="avatar-option" type="button" data-avatar="👾">👾</button>
+                        <button class="avatar-option" type="button" data-avatar="🤖">🤖</button>
+                        <button class="avatar-option" type="button" data-avatar="🔥">🔥</button>
+                        <button class="avatar-option" type="button" data-avatar="💜">💜</button>
+                        <button class="avatar-option" type="button" data-avatar="🚀">🚀</button>
+                        <button class="avatar-option" type="button" data-avatar="🎮">🎮</button>
+
+                    </div>
+
+                </div>
+
+                <div class="field">
+
+                    <label for="profile-password">
+                        Новый пароль (необязательно)
+                    </label>
+
+                    <input
+                        id="profile-password"
+                        type="password"
+                        placeholder="Оставь пустым, чтобы не менять"
+                        minlength="6"
+                        autocomplete="new-password"
+                    >
+
+                </div>
+
+                <button class="primary-btn" type="submit">
+                    Сохранить изменения
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <!-- УВЕДОМЛЕНИЯ -->
+
+    <div id="toast"></div>
+
+    <!-- СКРИПТЫ -->
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/app.js"></script>
+
+</body>
+</html>
